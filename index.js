@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 const Koa = require('koa');
 const serve = require('koa-static');
 const hook = require('server-hook');
