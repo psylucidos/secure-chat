@@ -1,14 +1,28 @@
 {
-  "name": "server",
+  "name": "secure-chat",
   "version": "0.0.1",
-  "description": "",
+  "description": "Super secure chat webapp.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npm run lint && node index.js",
     "lint": "npx eslint ./"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psylucidos/secure-chat.git"
+  },
+  "author": "psylcuidos",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/psylucidos/secure-chat/issues"
+  },
+  "homepage": "https://github.com/psylucidos/secure-chat#readme",
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
+  },
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "dotenv": "^10.0.0",
@@ -23,5 +37,6 @@
     "eslint": "^8.8.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4"
+    "server-hook": "^1.0.3"
   }
 }

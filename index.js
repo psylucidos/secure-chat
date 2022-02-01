@@ -1,8 +1,9 @@
 require('dotenv').config();
 
-const hook = require('server-hook');
+
 const Koa = require('koa');
 const serve = require('koa-static');
+const hook = require('server-hook');
 const cors = require('@koa/cors');
 const path = require('path');
 
@@ -19,10 +20,20 @@ app.on('error', (err) => {
 
 app
   .use(async (ctx, next) => {
-    const start = Date.now();
+    console.log(ctx.path);
     await next();
-    const ms = Date.now() - start;
-    hook.request(ms);
+  })
+  .use(async (ctx, next) => {
+    // if request is for a page (not css/js file)
+    if (ctx.path.includes('.html') || ctx.path[ctx.path.length - 1] === '/') {
+      // record response time
+      const start = Date.now();
+      await next();
+      const ms = Date.now() - start;
+      hook.request(ms); // update hook
+    } else {
+      await next();
+    }
   })
   .use(cors({
     origin: '*',
