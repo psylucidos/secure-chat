@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint ./"
   },
   "author": "",
   "license": "MIT",
@@ -14,6 +15,13 @@
     "koa": "^2.13.4",
     "koa-joi-router": "^8.0.0",
     "koa-static": "^5.0.0",
-    "server-hook": "^1.0.3"
+    "server-hook": "^1.0.4",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4"
   }
 }

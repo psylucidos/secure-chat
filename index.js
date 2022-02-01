@@ -7,7 +7,11 @@ const cors = require('@koa/cors');
 const path = require('path');
 
 const app = new Koa();
+const server = require('http').createServer(app.callback());
+const io = require('socket.io')(server);
 const api = require('./api');
+
+require('./api/socket')(io);
 
 app.on('error', (err) => {
   hook.logErr(err);
@@ -26,11 +30,13 @@ app
   .use(serve(path.join(__dirname, '/public/')))
   .use(api.middleware());
 
-app.listen(process.env.PORT);
+server.listen(process.env.PORT);
 hook.setStatus('Online');
+
+console.log(process.env.HOOKTARGET);
 
 hook.init({
   target: process.env.HOOKTARGET,
   projectName: process.env.HOOKNAME,
   interval: process.env.HOOKINTERVAL,
-})
+});
