@@ -30,30 +30,69 @@ function findPrimitiveRoot(k) { // finds primitive root modulo
   }
 }
 
-let connections = [];
+let rooms = [];
 
 module.exports = function module(io) {
   io.on('connection', (client) => {
     console.log('connection');
 
-    client.on('initialise room', (data) => {
+    client.on('init room', (data) => {
       console.log('initialise room');
       console.log(data);
       let sharedPrime = genPrime(process.env.MINPRIME, process.env.MAXPRIME);
       let sharedBase = findPrimitiveRoot(sharedPrime);
 
-      connections.push({
+      rooms.push({
+        roomID: data.roomID,
+        clients: [data.socketID],
+        sharedPrime,
+        sharedBase,
+        keys: [],
+      });
+
+      client.join(data.roomID);
+
+      console.log('new room', rooms[rooms.length - 1]);
+
+      client.emit('init response', {
         sharedPrime,
         sharedBase
       });
+    });
 
-      console.log('response', connections);
-      console.log(client.to(data.socketID));
+    client.on('join room', (data) => {
+      const roomID = data.roomID;
+      console.log('room id given', roomID);
 
-      client.to(data.socketID).emit('initialise response', {
-        sharedPrime,
-        sharedBase
-      });
+      for (let i = 0; i < rooms.length; i++) {
+        console.log('room', rooms[i].roomID);
+        if (rooms[i].roomID === roomID && rooms[i].clients.length === 1) {
+          console.log('joined');
+          client.join(roomID);
+          client.emit('room data', rooms[i]);
+          rooms[i].clients.push(data.socketID);
+          return;
+        }
+      }
+
+      client.emit('room data', false);
+    });
+
+    client.on('post key', (data) => {
+      console.log('recieved post key', data);
+      for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i].roomID === data.roomID) {
+          console.log('found room');
+          rooms[i].keys.push({
+            socketID: data.socketID,
+            key: data.key
+          });
+          if (rooms[i].keys.length === 2) {
+            console.log('returning keys');
+            io.to(rooms[i].roomID).emit('return key', rooms[i].keys);
+          }
+        }
+      }
     });
 
     client.on('disconnect', () => {
