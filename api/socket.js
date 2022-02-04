@@ -64,7 +64,6 @@ module.exports = function module(io) {
 
     client.on('join room', (data) => {
       const { roomID } = data;
-      console.log(client.id, 'joined room', roomID);
 
       for (let i = 0; i < rooms.length; i += 1) {
         if (rooms[i].roomID === roomID && rooms[i].clients.length === 1) {

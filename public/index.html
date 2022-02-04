@@ -3,11 +3,25 @@
   <head>
     <meta charset="utf-8">
     <title>Secure Chat</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <button type="button" onclick="initialise()" name="create">Create Room</button>
+    <span>Room Code: <span id="room-code-text">?</span></span>
+
+    <input type="text" id="room-code-input" placeholder="Room Code">
+    <button onclick="join()" type="submit" name="join">Join</button>
+
+    <div class="chat">
+      <div class="chat-box">
+
+      </div>
+      <input type="text" id="chat-input" placeholder="Message...">
+    </div>
+
     <script src="big-number.js" charset="utf-8"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./utilities.js" charset="utf-8"></script>
-    <script src="./initialise.js" charset="utf-8"></script>
+    <script src="./app.js" charset="utf-8"></script>
   </body>
 </html>

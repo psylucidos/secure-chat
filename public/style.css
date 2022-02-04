@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  padding: 0;
+  font: sans-serif;
+}
+
+.chat {
+  width: 80vw;
+  padding: 1vw;
+  background: #white;
+  height: 89vh;
+}
+
+.chat-box {
+  background: #dddfdd;
+  width: 80vw;
+  height: 87vh;
+  margin-bottom: 1vh;
+}
+
+#chat-input {
+  width: calc(80vw - 0.4vw);
+  padding: 0.2vw;
+  border: 0;
+  border-radius: 10px;
+  margin: 0;
+  height: calc(3vh - 0.4vw);
+}
