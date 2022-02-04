@@ -37,11 +37,10 @@ const rooms = [];
 
 module.exports = function module(io) {
   io.on('connection', (client) => {
-    console.log('connection');
+    console.log('new connection with', client.id);
 
     client.on('init room', (data) => {
-      console.log('initialise room');
-      console.log(data);
+      console.log(client.id, 'initialised room', data.roomID);
       const sharedPrime = genPrime(process.env.MINPRIME, process.env.MAXPRIME);
       const sharedBase = findPrimitiveRoot(sharedPrime);
 
@@ -65,12 +64,11 @@ module.exports = function module(io) {
 
     client.on('join room', (data) => {
       const { roomID } = data;
-      console.log('room id given', roomID);
+      console.log(client.id, 'joined room', roomID);
 
       for (let i = 0; i < rooms.length; i += 1) {
-        console.log('room', rooms[i].roomID);
         if (rooms[i].roomID === roomID && rooms[i].clients.length === 1) {
-          console.log('joined');
+          console.log(client.id, 'joined', roomID);
           client.join(roomID);
           client.emit('room data', rooms[i]);
           rooms[i].clients.push(data.socketID);
@@ -82,16 +80,15 @@ module.exports = function module(io) {
     });
 
     client.on('post key', (data) => {
-      console.log('recieved post key', data);
+      console.log(client.id, 'sent post key', data);
       for (let i = 0; i < rooms.length; i += 1) {
         if (rooms[i].roomID === data.roomID) {
-          console.log('found room');
           rooms[i].keys.push({
             socketID: data.socketID,
             key: data.key,
           });
           if (rooms[i].keys.length === 2) {
-            console.log('returning keys');
+            console.log('returning keys to', rooms[i].id);
             io.to(rooms[i].roomID).emit('return key', rooms[i].keys);
           }
         }
@@ -99,7 +96,7 @@ module.exports = function module(io) {
     });
 
     client.on('disconnect', () => {
-      console.log('disconnect');
+      console.log(client.id, 'disconnect');
     });
   });
 };

@@ -17,7 +17,7 @@ function join() {
       roomID: Number(roomID),
     });
   } else {
-    console.log('no room');
+    console.log('no room found');
   }
 }
 
@@ -28,7 +28,7 @@ socket.on('connect', () => {
 });
 
 socket.on('room data', (data) => {
-  console.log('joined room');
+  console.log('joined room', roomID);
   console.log(data);
   sharedPrime = data.sharedPrime;
 
@@ -46,7 +46,6 @@ socket.on('return key', (data) => {
   console.log(data);
   for (let i = 0; i < data.length; i += 1) {
     if (data[i].socketID !== socketID) {
-      console.log(data[i].key, secret, sharedPrime);
       sharedSecret = BigNumber(data[i].key).pow(secret).mod(sharedPrime).clean();
       console.log('shared secret', sharedSecret);
     }
