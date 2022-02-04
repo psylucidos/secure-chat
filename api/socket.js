@@ -39,6 +39,10 @@ module.exports = function module(io) {
   io.on('connection', (client) => {
     console.log('new connection with', client.id);
 
+    client.on('message', (data) => {
+      io.to(data.roomID).emit('message', data);
+    });
+
     client.on('init room', (data) => {
       console.log(client.id, 'initialised room', data.roomID);
       const sharedPrime = genPrime(process.env.MINPRIME, process.env.MAXPRIME);

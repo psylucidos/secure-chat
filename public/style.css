@@ -4,14 +4,14 @@ body {
   font: sans-serif;
 }
 
-.chat {
+#chat {
   width: 80vw;
   padding: 1vw;
   background: #white;
   height: 89vh;
 }
 
-.chat-box {
+#chat-box {
   background: #dddfdd;
   width: 80vw;
   height: 87vh;

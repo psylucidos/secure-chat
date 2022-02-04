@@ -7,6 +7,12 @@ let sharedSecret = 0;
 
 let socketID = '';
 
+// var encrypted = CryptoJS.AES.encrypt("Message", "SecretPassphrase");
+//
+// var decrypted = CryptoJS.AES.decrypt(encrypted, "SecretPassphrase");
+//
+// console.log(encrypted, decrypted);
+
 function initialise() {
   console.log('my secret', secret);
   roomID = ranBetween(10000, 1000000);
@@ -35,8 +41,7 @@ function initialise() {
 
 function join() {
   console.log('my secret', secret);
-  roomID = Number(document.getElementById('room-code-input').value); // eslint-disable-line
-  console.log(roomID);
+  roomID = Number(document.getElementById('room-code-input').value);
 
   if (roomID) {
     socket.emit('join room', {
@@ -66,6 +71,33 @@ function join() {
     });
   });
 }
+
+function message() {
+  let text = document.getElementById('chat-input').value;
+  text = CryptoJS.AES.encrypt(text, String(sharedSecret)).toString();
+  console.log('sending message', text);
+  document.getElementById('chat-input').value = "";
+
+  socket.emit('message', {
+    socketID,
+    roomID,
+    text,
+  });
+}
+
+document.getElementById('chat-input').addEventListener('keyup', function(event) {
+  if (event.keyCode === 13) {
+  	message();
+  }
+});
+
+socket.on('message', (data) => {
+  console.log('incoming message', data);
+  var decrypted = CryptoJS.AES.decrypt(data.text, String(sharedSecret)).toString();
+  let chat = document.getElementById('chat-box');
+  let p = document.createElement('p');
+  chat.append(decrypted, p);
+});
 
 socket.on('return key', (data) => {
   console.log('key returned');
