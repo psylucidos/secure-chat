@@ -1,19 +1,56 @@
-/* global io, BigNumber, ranBetween, secret */
+/* global io */
+
+const crypto = require('crypto');
+const bigNumber = require('big-number');
 
 const socket = io();
 let roomID = 0;
 let sharedPrime = 0;
 let sharedSecret = 0;
+let sharedKey = '';
+
+const MINSECRET = 1000;
+const MAXSECRET = 10000;
+
+bigNumber.prototype.clean = function clean() {
+  let total = '';
+  for (let i = 0; i < this.number.length; i += 1) {
+    total += this.number[this.number.length - (i + 1)];
+  }
+  return total;
+};
+
+function ranBetween(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+const secret = ranBetween(MINSECRET, MAXSECRET); // eslint-disable-line
 
 let socketID = '';
 
-// var encrypted = CryptoJS.AES.encrypt("Message", "SecretPassphrase");
-//
-// var decrypted = CryptoJS.AES.decrypt(encrypted, "SecretPassphrase");
-//
-// console.log(encrypted, decrypted);
+function encrypt(text, key) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+  let encrypted = cipher.update(text);
 
-function initialise() {
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+  return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
+}
+
+function decrypt(text, key) {
+  const textParts = text.split(':');
+  const iv = Buffer.from(textParts.shift(), 'hex');
+  const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+  let decrypted = decipher.update(encryptedText);
+
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+  return decrypted.toString();
+}
+
+function initialise() { // eslint-disable-line
   console.log('my secret', secret);
   roomID = ranBetween(10000, 1000000);
   console.log('room id', roomID);
@@ -29,7 +66,7 @@ function initialise() {
     console.log(data);
     sharedPrime = data.sharedPrime;
 
-    const x = BigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
+    const x = bigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
     console.log('posting key', x);
     socket.emit('post key', {
       socketID,
@@ -39,7 +76,7 @@ function initialise() {
   });
 }
 
-function join() {
+function join() { // eslint-disable-line
   console.log('my secret', secret);
   roomID = Number(document.getElementById('room-code-input').value);
 
@@ -62,7 +99,7 @@ function join() {
     }
     sharedPrime = data.sharedPrime;
 
-    const x = BigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
+    const x = bigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
     console.log('posting key', x);
     socket.emit('post key', {
       socketID,
@@ -74,9 +111,9 @@ function join() {
 
 function message() {
   let text = document.getElementById('chat-input').value;
-  text = CryptoJS.AES.encrypt(text, String(sharedSecret)).toString();
+  text = encrypt(text, sharedKey);
   console.log('sending message', text);
-  document.getElementById('chat-input').value = "";
+  document.getElementById('chat-input').value = '';
 
   socket.emit('message', {
     socketID,
@@ -85,18 +122,12 @@ function message() {
   });
 }
 
-document.getElementById('chat-input').addEventListener('keyup', function(event) {
-  if (event.keyCode === 13) {
-  	message();
-  }
-});
-
 socket.on('message', (data) => {
   console.log('incoming message', data);
-  var decrypted = CryptoJS.AES.decrypt(data.text, String(sharedSecret)).toString();
-  let chat = document.getElementById('chat-box');
-  let p = document.createElement('p');
-  chat.append(decrypted, p);
+  const text = decrypt(data.text, sharedKey);
+  const chat = document.getElementById('chat-box');
+  const p = document.createElement('p');
+  chat.append(text, p);
 });
 
 socket.on('return key', (data) => {
@@ -104,8 +135,9 @@ socket.on('return key', (data) => {
   console.log(data);
   for (let i = 0; i < data.length; i += 1) {
     if (data[i].socketID !== socketID) {
-      sharedSecret = BigNumber(data[i].key).pow(secret).mod(sharedPrime).clean();
-      console.log('shared secret', sharedSecret);
+      sharedSecret = bigNumber(data[i].key).pow(secret).mod(sharedPrime).clean();
+      sharedKey = crypto.createHash('md5').update(String(sharedSecret)).digest('hex');
+      console.log('shared secret', sharedKey);
     }
   }
 });
@@ -119,4 +151,12 @@ socket.on('connect', () => {
 socket.on('disconnect', (data) => {
   console.log('disconnected');
   console.log(data);
+});
+
+document.getElementById('create-room-btn').addEventListener('click', initialise);
+document.getElementById('join-room-btn').addEventListener('click', join);
+document.getElementById('chat-input').addEventListener('keyup', (event) => {
+  if (event.keyCode === 13) {
+    message();
+  }
 });
