@@ -1,16 +1,16 @@
 /* global io */
 
+require('@fortawesome/fontawesome-free/js/all'); // load in font-awesome icons
 const crypto = require('crypto');
 const bigNumber = require('big-number');
 
 const socket = io();
+const MINSECRET = 1000;
+const MAXSECRET = 10000;
 let roomID = 0;
 let sharedPrime = 0;
 let sharedSecret = 0;
 let sharedKey = '';
-
-const MINSECRET = 1000;
-const MAXSECRET = 10000;
 
 bigNumber.prototype.clean = function clean() {
   let total = '';
@@ -24,7 +24,7 @@ function ranBetween(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-const secret = ranBetween(MINSECRET, MAXSECRET); // eslint-disable-line
+const secret = ranBetween(MINSECRET, MAXSECRET);
 
 let socketID = '';
 
@@ -50,7 +50,10 @@ function decrypt(text, key) {
   return decrypted.toString();
 }
 
-function initialise() { // eslint-disable-line
+function initialise() {
+  document.getElementById('chat-input').disabled = true;
+  document.getElementById('connect-form').style.display = 'none';
+  document.getElementById('chat').style.display = 'inline-block';
   console.log('my secret', secret);
   roomID = ranBetween(10000, 1000000);
   console.log('room id', roomID);
@@ -76,7 +79,10 @@ function initialise() { // eslint-disable-line
   });
 }
 
-function join() { // eslint-disable-line
+function join() {
+  document.getElementById('chat-input').disabled = true;
+  document.getElementById('connect-form').style.display = 'none';
+  document.getElementById('chat').style.display = 'inline-block';
   console.log('my secret', secret);
   roomID = Number(document.getElementById('room-code-input').value);
 
@@ -93,6 +99,7 @@ function join() { // eslint-disable-line
   socket.on('room data', (data) => {
     console.log('joined room', roomID);
     console.log(data);
+    document.getElementById('room-code-text').innerHTML = data.roomID;
     if (!data) {
       console.log('room dont exist');
       return;
@@ -124,7 +131,7 @@ function message() {
 
 socket.on('message', (data) => {
   console.log('incoming message', data);
-  const text = decrypt(data.text, sharedKey);
+  const text = `${data.socketID}: ${decrypt(data.text, sharedKey)}`;
   const chat = document.getElementById('chat-box');
   const p = document.createElement('p');
   chat.append(text, p);
@@ -137,6 +144,7 @@ socket.on('return key', (data) => {
     if (data[i].socketID !== socketID) {
       sharedSecret = bigNumber(data[i].key).pow(secret).mod(sharedPrime).clean();
       sharedKey = crypto.createHash('md5').update(String(sharedSecret)).digest('hex');
+      document.getElementById('chat-input').disabled = false;
       console.log('shared secret', sharedKey);
     }
   }
@@ -145,7 +153,6 @@ socket.on('return key', (data) => {
 socket.on('connect', () => {
   console.log('connected as', socket.id);
   socketID = socket.id;
-  // initialise();
 });
 
 socket.on('disconnect', (data) => {

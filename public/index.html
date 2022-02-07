@@ -6,21 +6,31 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <button type="button" id="create-room-btn" name="create">Create Room</button>
-    <span>Room Code: <span id="room-code-text">?</span></span>
+    <header>
+      <h1>Secure Chat</h1>
+      <p>Room Code: <span id="room-code-text">?</span></p>
+    </header>
 
-    <input type="text" id="room-code-input" placeholder="Room Code">
-    <button id="join-room-btn" type="submit" name="join">Join</button>
-
-    <div id="chat">
-      <div id="chat-box">
-
+    <div id="page">
+      <div id="connect-form">
+        <h3>Join a Chat</h3>
+        <button type="button" id="create-room-btn" name="create"><i class="fas fa-plus"></i> Create Room</button>
+        <p>OR</p>
+        <div id="connect-code-form">
+          <input type="text" id="room-code-input" placeholder="Room Code"><button id="join-room-btn" type="submit" name="join">Join</button>
+        </div>
       </div>
-      <input type="text" id="chat-input" placeholder="Message...">
+
+
+      <div id="chat" style="display: none;">
+        <div id="chat-box">
+
+        </div>
+        <input type="text" id="chat-input" placeholder="Message...">
+      </div>
     </div>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/index.min.js"></script> -->
-    <!-- <script src="big-number.js" charset="utf-8"></script> -->
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="./bundle.js" type="module" charset="utf-8"></script>
   </body>
