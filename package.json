@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run lint && npm run browserify && node index.js",
     "lint": "npx eslint ./",
-    "browserify": "npx browserify public/app.js > public/bundle.js"
+    "browserify": "npx browserify public/chat/app.js > public/chat/bundle.js"
   },
   "repository": {
     "type": "git",
