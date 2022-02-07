@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 const Koa = require('koa');
 const serve = require('koa-static');
 const hook = require('server-hook');
@@ -19,10 +18,6 @@ app.on('error', (err) => {
 });
 
 app
-  .use(async (ctx, next) => {
-    console.log(ctx.path);
-    await next();
-  })
   .use(async (ctx, next) => {
     // if request is for a page (not css/js file)
     if (ctx.path.includes('.html') || ctx.path[ctx.path.length - 1] === '/') {
