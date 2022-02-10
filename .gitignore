@@ -136,4 +136,4 @@ dist
 # OS files
 .DS_Store
 
-/public/bundle.js
+/public/chat/bundle.js

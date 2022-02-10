@@ -53,6 +53,7 @@ function decrypt(text, key) {
 function initialise() {
   document.getElementById('chat-input').disabled = true;
   document.getElementById('connect-form').style.display = 'none';
+  document.getElementById('chat-loader').style.display = 'inline-block';
   document.getElementById('chat').style.display = 'inline-block';
   console.log('my secret', secret);
   roomID = ranBetween(10000, 1000000);
@@ -71,6 +72,7 @@ function initialise() {
 
     const x = bigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
     console.log('posting key', x);
+    document.getElementById('chat-loading-message').innerHTML = 'Posting encryption key...';
     socket.emit('post key', {
       socketID,
       key: x,
@@ -82,9 +84,11 @@ function initialise() {
 function join() {
   document.getElementById('chat-input').disabled = true;
   document.getElementById('connect-form').style.display = 'none';
+  document.getElementById('chat-loader').style.display = 'inline-block';
   document.getElementById('chat').style.display = 'inline-block';
   console.log('my secret', secret);
   roomID = Number(document.getElementById('room-code-input').value);
+  document.getElementById('room-code-text').innerHTML = roomID;
 
   if (roomID) {
     socket.emit('join room', {
@@ -99,13 +103,13 @@ function join() {
   socket.on('room data', (data) => {
     console.log('joined room', roomID);
     console.log(data);
-    document.getElementById('room-code-text').innerHTML = data.roomID;
     if (!data) {
       console.log('room dont exist');
       return;
     }
     sharedPrime = data.sharedPrime;
 
+    document.getElementById('chat-loading-message').innerHTML = 'Posting encryption key...';
     const x = bigNumber(data.sharedBase).pow(secret).mod(data.sharedPrime).clean();
     console.log('posting key', x);
     socket.emit('post key', {
@@ -140,11 +144,13 @@ socket.on('message', (data) => {
 socket.on('return key', (data) => {
   console.log('key returned');
   console.log(data);
+  document.getElementById('chat-loading-message').innerHTML = 'Calculating shared key...';
   for (let i = 0; i < data.length; i += 1) {
     if (data[i].socketID !== socketID) {
       sharedSecret = bigNumber(data[i].key).pow(secret).mod(sharedPrime).clean();
       sharedKey = crypto.createHash('md5').update(String(sharedSecret)).digest('hex');
       document.getElementById('chat-input').disabled = false;
+      document.getElementById('chat-loader').style.display = 'none';
       console.log('shared secret', sharedKey);
     }
   }
