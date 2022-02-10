@@ -43,64 +43,73 @@ button {
   align-items: center;
 }
 
+/* # CONNECT FORM # */
+
 #connect-form {
-  width: 60vw;
-  height: auto;
+  width: 400px;
 }
 
 #connect-form h3 {
   font-size: 2vh;
   font-weight: normal;
   text-align: center;
-  margin: 10px;
+  margin: 20px;
 }
 
 #create-room-btn {
   position: absolute;
-  width: 20vw;
-  margin-left: 20vw;
+  width: 400px;
+  padding: 1vh 2vh 1vh 2vh;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #connect-form p {
-  width: 10vw;
+  width: 400px;
   text-align: center;
-  margin-left: 25vw;
-  margin-top: 5vh;
+  margin-top: 7vh;
   color: grey;
 }
 
-#connect-code-form {
-  width: 20vw;
-  margin-left: 20vw;
+#join-room-form {
+  width: 400px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #room-code-input {
-  padding: 0.5vw 2vw 0.5vw 2vw;
+  padding: 1vh 2vh 1vh 2vh;
   border-radius: 3px 0px 0px 3px;
-  width: 10vw;
+  width: calc(300px - 4vh);
   margin: 0;
   border: 0;
 }
 
 #join-room-btn {
-  width: 6vw;
+  width: 100px;
+  padding: 1vh 2vh 1vh 2vh;
   border-radius: 0px 3px 3px 0px;
 }
+
+/* # CHAT # */
 
 #chat {
   width: 80vw;
   padding: 1vw;
-  background: #white;
-  height: 89vh;
+  /* background: black; */
+  height: 90vh;
+}
+
+#chat-loader {
+  width: 30vw;
+  margin-left: 25vw;
+  text-align: center;
+  margin-top: 35vh;
 }
 
 #chat-box {
-  background: #dddfdd;
-  width: 78vw;
-  border-radius: 3px;
-  height: 85vh;
+  background: #efefef;
+  width: 78vw; /* 80vh - 2vh */
+  border-radius: 5px;
+  height: calc(90vh - 3vw - calc(3vh - 0.4vw));
   padding: 1vw;
   margin-bottom: 1vh;
 }
@@ -109,8 +118,8 @@ button {
   width: calc(80vw - 2vw);
   padding: 0.2vw 1vw 0.2vw 1vw;
   border: 0;
-  border-radius: 10px;
+  border-radius: 5px;
   margin: 0;
   height: calc(3vh - 0.4vw);
-  background: lightgrey;
+  background: #efefef;
 }

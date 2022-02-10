@@ -16,7 +16,7 @@
         <h3>Join a Chat</h3>
         <button type="button" id="create-room-btn" name="create"><i class="fas fa-plus"></i> Create Room</button>
         <p>OR</p>
-        <div id="connect-code-form">
+        <div id="join-room-form">
           <input type="text" id="room-code-input" placeholder="Room Code"><button id="join-room-btn" type="submit" name="join">Join</button>
         </div>
       </div>
@@ -24,7 +24,10 @@
 
       <div id="chat" style="display: none;">
         <div id="chat-box">
-
+          <div id="chat-loader">
+            <i class="fas fa-lock fa-7x" style="color: #1e90ff;"></i>
+            <p id="chat-loading-message">Waiting for other client...</p>
+          </div>
         </div>
         <input type="text" id="chat-input" placeholder="Message...">
       </div>
